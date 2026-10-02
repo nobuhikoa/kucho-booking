@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>エアコンクリーニング ご予約フォーム｜空調のホットライン</title>
+<meta name="description" content="台数とオプションを選ぶと概算金額が出ます。送信後すぐに確認メールが届き、24時間以内にご連絡します。">
+<style>
+  :root {
+    --green: #82CA57;       /* ロゴ色：枠線・区切り・装飾だけ */
+    --green-text: #467C27;  /* 文字・ボタン */
+    --ink: #222; --sub: #5b5b5b; --line: #e3e3e3; --soft: #f6faf2; --err: #b3261e;
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  body { margin: 0; background: #fafafa; color: var(--ink); line-height: 1.7;
+    font-family: "Hiragino Sans", "Noto Sans JP", "Yu Gothic UI", "Meiryo", sans-serif; }
+  header { background: #fff; border-bottom: 3px solid var(--green); padding: 10px 16px; }
+  header .in { max-width: 680px; margin: 0 auto; display: flex; align-items: center; gap: 12px; }
+  header img { height: 42px; width: auto; }
+  main { max-width: 680px; margin: 0 auto; padding: 20px 16px 120px; }
+  .badge { display: inline-block; border: 2px solid var(--green); color: var(--green-text); font-weight: 700;
+    border-radius: 999px; padding: 2px 14px; font-size: 14px; }
+  h1 { font-size: 23px; margin: 10px 0 6px; }
+  .lead { color: var(--sub); margin: 0 0 16px; }
+  .lead b { color: var(--green-text); }
+  .card { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 18px 16px; margin: 0 0 18px; }
+  .card h2 { font-size: 18px; margin: 0 0 10px; padding-bottom: 8px; border-bottom: 2px solid var(--green); }
+  .card h3 { font-size: 15px; margin: 18px 0 4px; }
+  .who { font-size: 14px; background: var(--soft); border-left: 4px solid var(--green); padding: 8px 12px; margin: 0 0 18px; }
+
+  /* 台数の＋− */
+  .ctr { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+  .ctr:last-child { border-bottom: 0; }
+  .ctr .t { font-weight: 700; }
+  .ctr .p { display: block; font-size: 13px; color: var(--sub); font-weight: 400; }
+  .ctr .p em { font-style: normal; color: var(--green-text); }
+  .ctr .b { display: flex; align-items: center; gap: 6px; flex: none; }
+  .ctr button { width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--green); background: #fff;
+    color: var(--green-text); font-size: 22px; line-height: 1; cursor: pointer; }
+  .ctr button:disabled { border-color: #ddd; color: #bbb; cursor: default; }
+  .ctr output { min-width: 2em; text-align: center; font-size: 20px; font-weight: 700; }
+
+  .est { border: 2px solid var(--green); border-radius: 12px; padding: 14px 16px; margin-top: 16px; background: #fff; }
+  .est .lbl { font-size: 14px; color: var(--sub); }
+  .est .total { font-size: 30px; font-weight: 700; color: var(--green-text); }
+  .est .total small { font-size: 14px; color: var(--sub); font-weight: 400; }
+  .est table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 6px 0; }
+  .est td { padding: 3px 0; border-bottom: 1px dashed var(--line); }
+  .est td.r { text-align: right; white-space: nowrap; }
+  .est .n { font-size: 13px; color: var(--sub); margin: 6px 0 0; }
+
+  /* 入力欄 */
+  .field { padding: 12px 0; }
+  .field > label, .field > .label { display: block; font-weight: 700; margin-bottom: 4px; }
+  .req, .opt { font-size: 12px; font-weight: 700; padding: 1px 7px; border-radius: 4px; margin-left: 6px; vertical-align: 2px; }
+  .req { background: var(--green-text); color: #fff; }
+  .opt { border: 1px solid #ccc; color: var(--sub); }
+  .hint { font-size: 13px; color: var(--sub); margin: 4px 0 0; }
+  input[type=text], input[type=tel], input[type=email], input[type=date], select, textarea {
+    width: 100%; font: inherit; font-size: 16px; padding: 10px 12px; border: 1px solid #bbb; border-radius: 8px; background: #fff; color: var(--ink); }
+  input:focus, select:focus, textarea:focus { outline: 3px solid rgba(130, 202, 87, .45); border-color: var(--green-text); }
+  .choices { display: flex; flex-wrap: wrap; gap: 8px; }
+  .choices label { flex: 1 1 150px; border: 1px solid #bbb; border-radius: 8px; padding: 9px 12px; cursor: pointer; }
+  .choices input { margin-right: 6px; accent-color: var(--green-text); }
+  .choices label:has(input:checked) { border: 2px solid var(--green-text); background: var(--soft); padding: 8px 11px; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .invalid input, .invalid select, .invalid .choices label { border-color: var(--err); }
+  .err { color: var(--err); font-size: 14px; margin: 4px 0 0; }
+  .refnote { font-size: 13px; color: var(--green-text); margin: 4px 0 0; }
+  .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+  button.submit { display: block; width: 100%; padding: 16px; font: inherit; font-size: 18px; font-weight: 700;
+    color: #fff; background: var(--green-text); border: 0; border-radius: 12px; cursor: pointer; }
+  button.submit:disabled { opacity: .6; cursor: wait; }
+  .after { font-size: 14px; color: var(--sub); }
+  .msg { font-size: 15px; font-weight: 700; color: var(--err); }
+  .demo { background: #fff8e1; border: 1px solid #e6c34a; border-radius: 8px; padding: 10px 12px; font-size: 13px; }
+  pre.payload { background: #f4f4f4; padding: 10px; border-radius: 8px; font-size: 12px; white-space: pre-wrap; word-break: break-all; }
+
+  /* スマホでは画面下に合計を出しておく */
+  .bar { position: fixed; left: 0; right: 0; bottom: 0; background: #fff; border-top: 2px solid var(--green);
+    padding: 8px 16px; display: flex; justify-content: space-between; align-items: center; gap: 10px; z-index: 5; }
+  .bar b { color: var(--green-text); font-size: 20px; }
+  .bar a { color: var(--green-text); font-weight: 700; font-size: 14px; }
+  footer { text-align: center; font-size: 13px; color: var(--sub); padding: 0 16px 90px; }
+  @media (max-width: 480px) { .row2 { grid-template-columns: 1fr; } h1 { font-size: 20px; } }
+</style>
+</head>
+<body>
+<header><div class="in"><img src="img/logo.png" alt="空調のホットライン"></div></header>
+
+<main>
+  <span class="badge">メンテナンスのコツ、お教えします！</span>
+  <h1>エアコンクリーニング ご予約フォーム</h1>
+  <p class="lead">台数とオプションを選ぶと、概算金額が出ます。送信後すぐに確認メールが届き、<b>24時間以内</b>にご連絡のうえ作業日を確定します。</p>
+  <p class="who">お伺いするのは店長本人か、店長から直接指導を受けて育成されたスタッフだけです。</p>
+
+  <p class="demo" id="demoBanner" hidden></p>
+
+  <form id="f" novalidate>
+    <!-- ① 台数とオプション -->
+    <section class="card" id="step1">
+      <h2>1. 台数とオプションを選ぶ</h2>
+      <div id="counters"></div>
+
+      <div class="est" id="est" aria-live="polite">
+        <div class="lbl">概算金額</div>
+        <div class="total"><span id="eTotal">0</span>円 <small>（税込）</small></div>
+        <table id="eLines"></table>
+        <p class="n">こちらは概算です。最終的な金額は、当日に現物を確認し、お見積りに変わりがないかご説明してから作業を始めます。</p>
+      </div>
+    </section>
+
+    <!-- ② ご予約情報 -->
+    <section class="card">
+      <h2>2. ご予約情報を入力する</h2>
+
+      <div class="field" data-key="name">
+        <label for="name">お名前<span class="req">必須</span></label>
+        <input id="name" name="name" type="text" autocomplete="name" maxlength="60">
+      </div>
+      <div class="field" data-key="tel">
+        <label for="tel">電話番号<span class="req">必須</span></label>
+        <input id="tel" name="tel" type="tel" inputmode="tel" autocomplete="tel" maxlength="20">
+      </div>
+      <div class="field" data-key="email">
+        <label for="email">メールアドレス<span class="req">必須</span></label>
+        <input id="email" name="email" type="email" autocomplete="email" maxlength="120">
+        <p class="hint">確認メールをお送りします。</p>
+      </div>
+      <div class="field" data-key="zip">
+        <label for="zip">郵便番号<span class="opt">任意</span></label>
+        <input id="zip" name="zip" type="text" inputmode="numeric" autocomplete="postal-code" maxlength="8" placeholder="例：8120053">
+      </div>
+      <div class="field" data-key="address">
+        <label for="address">ご住所<span class="req">必須</span></label>
+        <input id="address" name="address" type="text" autocomplete="street-address" maxlength="150" placeholder="例：福岡市東区">
+        <p class="hint">市区町村までで大丈夫です。詳しいご住所は、ご連絡のときにお伺いします。</p>
+      </div>
+      <div class="field" data-key="housing">
+        <span class="label">お住まいのタイプ<span class="req">必須</span></span>
+        <div class="choices" id="housingChoices"></div>
+      </div>
+
+      <h3>作業の希望日</h3>
+      <div class="field" data-key="date1">
+        <span class="label">第1希望<span class="req">必須</span></span>
+        <div class="row2">
+          <input name="date1" type="date" aria-label="第1希望日">
+          <select name="time1" aria-label="第1希望の時間"></select>
+        </div>
+      </div>
+      <div class="field" data-key="date2">
+        <span class="label">第2希望<span class="opt">任意</span></span>
+        <div class="row2">
+          <input name="date2" type="date" aria-label="第2希望日">
+          <select name="time2" aria-label="第2希望の時間"></select>
+        </div>
+      </div>
+      <div class="field" data-key="date3">
+        <span class="label">第3希望<span class="opt">任意</span></span>
+        <div class="row2">
+          <input name="date3" type="date" aria-label="第3希望日">
+          <select name="time3" aria-label="第3希望の時間"></select>
+        </div>
+        <p class="hint" id="dateHint"></p>
+      </div>
+
+      <div class="field" data-key="parking">
+        <span class="label">駐車場<span class="req">必須</span></span>
+        <div class="choices" id="parkingChoices"></div>
+      </div>
+      <div class="field" data-key="note">
+        <label for="note">ご要望・備考<span class="opt">任意</span></label>
+        <textarea id="note" name="note" rows="4" maxlength="1000" placeholder="エアコンの型番が分かれば、ご記入ください。業務用エアコンや、高い所に付いているエアコンもこちらにどうぞ。"></textarea>
+      </div>
+      <div class="field" data-key="ref">
+        <label for="ref">紹介コード<span class="opt">任意</span></label>
+        <input id="ref" name="ref" type="text" maxlength="30" autocomplete="off">
+        <p class="hint">ご家族やお知り合いから紹介された方はご記入ください。</p>
+        <p class="refnote" id="refnote" hidden>紹介リンクから来られたため、紹介コードを入れておきました。</p>
+      </div>
+
+      <div class="hp" aria-hidden="true"><label>ウェブサイト<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+
+      <p class="msg" id="msg" role="alert" hidden></p>
+      <button type="submit" class="submit" id="submit">この内容で予約する</button>
+      <p class="after">送信後、確認メールをお送りします。この時点ではご予約は確定しません。<b>24時間以内</b>にお電話またはメールでご連絡し、日程と金額をご相談のうえで確定します。</p>
+    </section>
+  </form>
+
+  <section class="card" id="done" hidden>
+    <h2>ご予約のお申し込みを受け付けました</h2>
+    <p id="receipt" style="font-weight:700"></p>
+    <p>ご入力のメールアドレスに、確認メールをお送りしました。<b>24時間以内</b>にご連絡いたします。</p>
+    <p class="after">確認メールが届かない場合は、迷惑メールのフォルダもご確認ください。お急ぎの方はお電話ください（<a id="doneTel"></a>）。</p>
+    <div id="payloadBox" hidden><p class="demo">【試験】受付に送られる中身：</p><pre class="payload" id="payload"></pre></div>
+  </section>
+</main>
+
+<div class="bar" id="bar"><span>概算 <b id="barTotal">0</b>円（税込）</span><a href="#step1">内訳を見る</a></div>
+<footer>空調のホットライン　☎ <a id="footTel"></a></footer>
+
+<script src="js/config.js"></script>
+<script src="js/price.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
